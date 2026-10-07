@@ -1,0 +1,18 @@
+name: Supabase keepalive
+
+on:
+  schedule:
+    - cron: "17 6 * * *"   # tous les jours à 06:17 UTC
+  workflow_dispatch:        # permet de le lancer à la main
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        run: |
+          code=$(curl -s -o /tmp/out.json -w "%{http_code}" \
+            "https://jiwnhpyugybtazlkgmma.supabase.co/rest/v1/pro_resources?select=id&limit=1&apikey=sb_publishable_-fKWzD2wlQ92Js9-rRc_3g_Gjjj8uUz")
+          echo "HTTP $code"
+          cat /tmp/out.json
+          test "$code" -ge 200 && test "$code" -lt 300
